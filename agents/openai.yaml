@@ -1,0 +1,4 @@
+interface:
+  display_name: "论文导读与中文批注"
+  short_description: "保留论文原页，生成中文导读、重点批注与批判性总结"
+  default_prompt: "Use $paper-guide-annotator to create a faithful Chinese guided-reading and annotated PDF for this academic paper."
