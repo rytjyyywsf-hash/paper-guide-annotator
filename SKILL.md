@@ -19,14 +19,16 @@ Use the user's stated preferences. If they omit them, proceed with these default
 
 If the source PDF is not available, ask for it. Ask about the reading profile only when a missing choice would substantially change the result.
 
-For density choices and paper-type-specific review criteria, read [references/annotation-framework.md](references/annotation-framework.md).
+For sidebar composition, figure/table analysis, typography, density choices, paper-type-specific review criteria, and the visual QA checklist, read [references/annotation-framework.md](references/annotation-framework.md) before designing the output.
 
 ## Preserve the paper
 
 - Never overwrite the source PDF. Produce a clearly named annotated copy.
-- Do not delete, rewrite, translate in place, crop, opaquely cover, or rearrange original text, formulas, tables, figures, captions, or images. Selective translucent PDF highlights are allowed as a separate annotation layer.
-- Do not reduce the legibility or effective resolution of original pages.
-- Prefer front/back guide pages plus non-obscuring margin notes. If margins cannot be added safely, insert commentary pages keyed to original pages or use unobtrusive PDF annotations. Never place commentary over paper content.
+- Do not delete, rewrite, translate in place, crop, opaquely cover, or rearrange original text, formulas, tables, figures, captions, or images.
+- Preserve every original paper page at its original dimensions and effective resolution. Do not shrink, rasterize, or reflow the original content region to make room for commentary.
+- For every original paper page, expand the canvas to the right and add a persistent narrow sidebar. Use roughly 40%-45% of the original page width by default, adapting to the page dimensions without creating an equally wide second page. Separate the source page and sidebar with a light, clear rule.
+- Make all reading guidance directly visible in the page content. Do not use PDF comments, sticky notes, popups, hidden page-level notes, or any other interactive `/Annot` object. Do not substitute separate page-commentary sheets for the persistent sidebar.
+- Keep front guide pages and a closing assessment when useful, but never place commentary over the paper content. If the source page cannot be safely embedded at full size beside a readable sidebar, report the constraint instead of covering or shrinking the paper or hiding notes interactively.
 - Preserve the mapping to the original PDF page number and, when present, the paper's printed page number.
 - Treat the original page as the source of truth. If extraction or OCR disagrees with the rendered page, inspect the page and avoid silently repairing the paper.
 
@@ -43,9 +45,11 @@ Inspect the complete paper, including abstract, section structure, equations, fi
 
 Do not infer the paper's conclusion from the abstract alone. Mark uncertain interpretations explicitly.
 
+Before layout, make a page plan for every original page: its role in the paper, a one-to-three-sentence page summary, whether it contains a decision-critical figure or table, the few worthwhile annotation anchors, and any added mathematical expressions that require typesetting. This plan is also the completeness checklist for the final PDF.
+
 ## Highlight important source sentences
 
-Highlight the paper's most important original sentences by default. Use true PDF highlight annotations when text coordinates are reliable; otherwise use a carefully aligned translucent annotation only after visual verification. Do not alter the underlying text objects.
+Highlight the paper's most important original sentences by default. Render highlights as static translucent visual content aligned to reliable text coordinates; do not create interactive PDF highlight annotations. Preserve the underlying text objects and verify alignment on the rendered page.
 
 Highlight selectively. Many pages may need no highlight. Prioritize exact sentences or short clauses that express:
 
@@ -80,6 +84,24 @@ Place a concise Chinese guide before the untouched paper pages. Adapt its length
 
 Avoid repeating the same material under multiple headings. Preserve technical precision while explaining jargon.
 
+Use a readable guide-page body size of about 12.5-13.5 pt with generous leading. Do not solve overflow by compressing prose below a comfortable reading size; edit or repaginate the guide instead.
+
+## Build each original-paper page
+
+Use the same visible hierarchy on every paper page:
+
+1. page title and section role;
+2. `本页概括`;
+3. `图表解读`, only when the page contains a selected important figure or table;
+4. selective detailed notes tied to numbered anchors;
+5. a compact footer legend.
+
+Every original page must have `本页概括`, even when it has no other note. In one to three sentences, explain what the page contributes to the whole paper and what it mainly does. Do not merely repeat a heading or duplicate the detailed notes.
+
+Add a distinct `图表解读` module for figures and tables that carry the method, central empirical conclusions, reliability/performance/cost tradeoffs, important ablations or cross-dataset comparisons, or definitions that govern experimental interpretation. Explain the direct observation, the conclusion it supports, and the limits of that inference. Do not mechanically annotate every visual, paraphrase only the caption, or turn correlation into causation.
+
+Keep `本页概括`, `图表解读`, and detailed notes visually and rhetorically separate. Use different but coordinated light backgrounds for the first two modules. When space is tight, preserve the summary and important figure/table analysis, then remove or shorten lower-value notes rather than compressing the typography.
+
 ## Add selective annotations
 
 Annotate load-bearing or genuinely difficult points rather than translating every sentence. Prioritize:
@@ -100,14 +122,17 @@ Keep three voices visibly distinct:
 - **理解辅助**: background, intuition, or reconstructed reasoning;
 - **批判性评价**: the annotator's assessment, alternative explanation, or open question.
 
-Never present an inference as an author claim. Retain exact mathematical symbols and define them consistently.
+Never present an inference as an author claim. Use explicit semantic labels such as `主张`, `方法`, `证据`, and `限制`; color may reinforce but never replace those labels. Retain exact mathematical symbols and define them consistently.
+
+Use about 10-10.5 pt for sidebar body text and avoid going below 9.5 pt. Set body leading to about 1.5-1.6 times the font size, and maintain clear spacing among headings, labels, paragraphs, modules, and footer. Do not fill empty space with low-value commentary.
 
 ## Typeset mathematical content
 
-Render every mathematical expression added by the annotator as finished typeset math. LaTeX may be used as the authoring source, but the delivered PDF must not expose raw delimiters or commands such as `$...$`, `\(...\)`, `\frac`, `\sum`, or `\mathbb` unless the note is explicitly discussing LaTeX syntax.
+Render every mathematical expression added by the annotator throughout guide pages, summaries, figure/table analysis, detailed notes, and closing pages as finished typeset math. LaTeX may be used as the authoring source, but the delivered PDF must not expose raw delimiters, commands, or linear stand-ins such as `$...$`, `\(...\)`, `\frac{n+1}{n}`, `n+1/n`, or `E[A]` unless the note is explicitly discussing source syntax.
 
 - Use inline math for short symbols and relations, and display math for derivations or multi-part equations.
-- Prefer vector output or embedded math fonts so formulas remain sharp when zoomed or printed; do not use screenshots of formulas.
+- Require vector output or embedded math fonts so fractions, roots, sums, expectations, superscripts, subscripts, Greek letters, and set symbols remain sharp and conventionally positioned when zoomed or printed. Do not use screenshots of formulas.
+- Typeset ordinary inline variables with mathematical fonts and proper scripts, not approximated Unicode or plain-text substitutes.
 - Preserve the paper's notation exactly, including accents, bold symbols, superscripts, subscripts, Greek letters, and equation numbering.
 - Align multi-line derivations clearly and explain what each transformation contributes instead of merely restating the expression.
 - If a formula cannot be rendered reliably, refer to the original equation number and explain it in prose; report the limitation rather than shipping broken or raw LaTeX.
@@ -130,13 +155,14 @@ Be fair and specific. Tie criticism to a page, result, assumption, or design cho
 
 Before delivery:
 
-- render the final PDF and inspect the guide, annotated pages, dense equations, figures, and closing pages;
-- confirm that notes do not overlap, clip, or obscure original content;
-- confirm that every highlight aligns tightly with the intended sentence, remains readable, and matches the color legend;
-- spot-check original-page regions against the source rendering for unchanged appearance and legibility;
-- verify page anchors and the mapping between annotated and original page numbers;
-- inspect mathematical annotations at normal size and high zoom; reject raw LaTeX, missing glyphs, rasterized screenshots, broken baselines, or clipped equations;
-- check that Chinese text and mathematical symbols render correctly;
-- report any pages that could not be reliably extracted or interpreted.
+- verify that every source page is present once, in order, and that its text, formulas, figures, tables, and images remain complete, legible, and at the original scale;
+- enumerate the PDF's annotation objects and require zero interactive annotations, including highlight, text, sticky-note, popup, and page-level comment annotations;
+- confirm that every original page has a visible `本页概括`, and that every figure/table selected in the page plan has a visible `图表解读`;
+- render the entire final PDF to page images and a contact sheet. Inspect all pages for clipping, overlap, overflow, unintended blank regions, unreadably small type, and inconsistent spacing;
+- perform high-resolution checks of the first guide pages, formula-dense pages, the densest sidebars, and selected important figure/table pages. Do not accept the result based only on successful scripts, text extraction, or string assertions;
+- confirm that notes never obscure original content and that each static highlight aligns tightly with its intended sentence, remains readable, and matches the semantic legend;
+- compare the original-paper region against source rendering on representative pages and verify the full page mapping; account only for intentional static highlight overlays;
+- inspect every page containing added mathematics at normal size and high zoom; reject raw LaTeX, linear plain-text formulas, missing glyphs, rasterized equations, broken baselines, or clipping;
+- check that Chinese text and mathematical symbols render correctly, and report any page that could not be reliably extracted, interpreted, or preserved.
 
 Deliver the annotated PDF and a brief note stating the chosen reader level, annotation density, and any material limitations. Keep intermediate OCR, images, and analysis files out of the deliverables unless the user asks for them.
